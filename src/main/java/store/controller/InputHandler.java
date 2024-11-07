@@ -1,9 +1,13 @@
 package store.controller;
 
+import static store.common.constant.ErrorMessage.INPUT_INVALID_FORMAT;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import store.common.util.FileReader;
 import store.common.util.StringUtils;
@@ -13,6 +17,8 @@ import store.model.Promotion;
 import store.model.Promotions;
 
 public class InputHandler {
+
+    private static final Pattern PURCHASE_ITEM_REGEX = Pattern.compile("^\\[(.+)\\-(.+)\\]$");
 
     public Promotions getPromotions() {
         try {
@@ -27,17 +33,6 @@ public class InputHandler {
         }
     }
 
-    private Promotion makePromotion(List<String> promotionValues) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        String name = promotionValues.get(0);
-        int purchaseQuantity = StringUtils.parseInt(promotionValues.get(1));
-        int giftQuantity = StringUtils.parseInt(promotionValues.get(2));
-        LocalDateTime startDate = LocalDateTime.parse(promotionValues.get(3), formatter);
-        LocalDateTime endDate = LocalDateTime.parse(promotionValues.get(4), formatter);
-        return Promotion.of(name, purchaseQuantity, giftQuantity, startDate, endDate);
-    }
-
     public Products getProducts(Promotions promotions) {
         try {
             List<String> fileLines = FileReader.readFile("src/main/resources/product.md");
@@ -49,6 +44,28 @@ public class InputHandler {
         } catch (IOException e) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public Map<String, Integer> getPurchaseItems(String message) {
+        List<String> purchaseItems = StringUtils.splitWithDelimiter(message, ",");
+        try {
+            return purchaseItems.stream()
+                    .map(purchaseItem -> StringUtils.extractFromRegex(purchaseItem, PURCHASE_ITEM_REGEX))
+                    .collect(Collectors.toMap(item -> item.get(0).strip(), item -> StringUtils.parseInt(item.get(1))));
+        } catch (IllegalStateException e) {
+            throw new IllegalArgumentException(INPUT_INVALID_FORMAT.message());
+        }
+    }
+
+    private Promotion makePromotion(List<String> promotionValues) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String name = promotionValues.get(0);
+        int purchaseQuantity = StringUtils.parseInt(promotionValues.get(1));
+        int giftQuantity = StringUtils.parseInt(promotionValues.get(2));
+        LocalDateTime startDate = LocalDateTime.parse(promotionValues.get(3), formatter);
+        LocalDateTime endDate = LocalDateTime.parse(promotionValues.get(4), formatter);
+        return Promotion.of(name, purchaseQuantity, giftQuantity, startDate, endDate);
     }
 
     private Product makeProduct(List<String> productValues, Promotions promotions) {
