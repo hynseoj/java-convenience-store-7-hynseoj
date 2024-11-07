@@ -28,6 +28,10 @@ public class Product {
         return price;
     }
 
+    public int quantity() {
+        return quantity;
+    }
+
     public Promotion promotion() {
         return promotion;
     }

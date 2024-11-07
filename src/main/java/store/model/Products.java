@@ -22,4 +22,8 @@ public class Products {
         products.addAll(additionalProducts);
         return new Products(products);
     }
+
+    public Set<Product> products() {
+        return products;
+    }
 }
