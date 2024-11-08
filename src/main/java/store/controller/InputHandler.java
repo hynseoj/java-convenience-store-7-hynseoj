@@ -15,10 +15,17 @@ import store.model.Product;
 import store.model.Products;
 import store.model.Promotion;
 import store.model.Promotions;
+import store.view.InputView;
 
 public class InputHandler {
 
     private static final Pattern PURCHASE_ITEM_REGEX = Pattern.compile("^\\[(.+)\\-(.+)\\]$");
+
+    private final InputView inputView;
+
+    public InputHandler(InputView inputView) {
+        this.inputView = inputView;
+    }
 
     public Promotions getPromotions() {
         try {
@@ -46,8 +53,8 @@ public class InputHandler {
         }
     }
 
-    public Map<String, Integer> getPurchaseItems(String message) {
-        List<String> purchaseItems = StringUtils.splitWithDelimiter(message, ",");
+    public Map<String, Integer> getPurchaseItems() {
+        List<String> purchaseItems = StringUtils.splitWithDelimiter(inputView.getPurchaseItems(), ",");
         try {
             return purchaseItems.stream()
                     .map(purchaseItem -> StringUtils.extractFromRegex(purchaseItem, PURCHASE_ITEM_REGEX))
