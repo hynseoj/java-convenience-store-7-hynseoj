@@ -20,6 +20,10 @@ public class Product {
         return new Product(name, price, quantity, promotion);
     }
 
+    public boolean isPromotionApplicable() {
+        return promotion.isWithinPromotionPeriod();
+    }
+
     public String name() {
         return name;
     }

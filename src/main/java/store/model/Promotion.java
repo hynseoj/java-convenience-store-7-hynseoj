@@ -1,5 +1,6 @@
 package store.model;
 
+import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -25,6 +26,12 @@ public class Promotion {
             String name, int purchaseQuantity, int giftQuantity, LocalDateTime startDate, LocalDateTime endDate
     ) {
         return new Promotion(name, purchaseQuantity, giftQuantity, startDate, endDate);
+    }
+
+    public boolean isWithinPromotionPeriod() {
+        LocalDateTime now = DateTimes.now();
+        return (now.isEqual(startDate) || now.isAfter(startDate)) &&
+                (now.isEqual(endDate) || now.isBefore(endDate));
     }
 
     public String name() {
