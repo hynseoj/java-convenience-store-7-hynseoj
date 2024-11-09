@@ -3,29 +3,28 @@ package store.model;
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import store.model.promotion.PromotionStrategy;
 
 public class Promotion {
 
     private final String name;
-    private final int purchaseQuantity;
-    private final int giftQuantity;
+    private final PromotionStrategy promotionStrategy;
     private final LocalDateTime startDate;
     private final LocalDateTime endDate;
 
     private Promotion(
-            String name, int purchaseQuantity, int giftQuantity, LocalDateTime startDate, LocalDateTime endDate
+            String name, PromotionStrategy promotionStrategy, LocalDateTime startDate, LocalDateTime endDate
     ) {
         this.name = name;
-        this.purchaseQuantity = purchaseQuantity;
-        this.giftQuantity = giftQuantity;
+        this.promotionStrategy = promotionStrategy;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
     public static Promotion of(
-            String name, int purchaseQuantity, int giftQuantity, LocalDateTime startDate, LocalDateTime endDate
+            String name, PromotionStrategy promotionStrategy, LocalDateTime startDate, LocalDateTime endDate
     ) {
-        return new Promotion(name, purchaseQuantity, giftQuantity, startDate, endDate);
+        return new Promotion(name, promotionStrategy, startDate, endDate);
     }
 
     public boolean isWithinPromotionPeriod() {

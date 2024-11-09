@@ -15,6 +15,8 @@ import store.model.Product;
 import store.model.Products;
 import store.model.Promotion;
 import store.model.Promotions;
+import store.model.promotion.BuyNGetMFreePromotion;
+import store.model.promotion.PromotionStrategy;
 import store.view.InputView;
 
 public class InputHandler {
@@ -69,10 +71,11 @@ public class InputHandler {
 
         String name = promotionValues.get(0);
         int purchaseQuantity = StringUtils.parseInt(promotionValues.get(1));
-        int giftQuantity = StringUtils.parseInt(promotionValues.get(2));
+        int freeQuantity = StringUtils.parseInt(promotionValues.get(2));
+        PromotionStrategy promotionStrategy = new BuyNGetMFreePromotion(purchaseQuantity, freeQuantity);
         LocalDateTime startDate = LocalDateTime.parse(promotionValues.get(3), formatter);
         LocalDateTime endDate = LocalDateTime.parse(promotionValues.get(4), formatter);
-        return Promotion.of(name, purchaseQuantity, giftQuantity, startDate, endDate);
+        return Promotion.of(name, promotionStrategy, startDate, endDate);
     }
 
     private Product makeProduct(List<String> productValues, Promotions promotions) {
