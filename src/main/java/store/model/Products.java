@@ -25,11 +25,11 @@ public class Products {
         return new Products(products);
     }
 
-    public boolean doesContainsAllProduct(Set<String> products) {
+    public boolean doesContainsAllProduct(Set<String> productNames) {
         return this.products.stream()
                 .map(Product::name)
                 .collect(Collectors.toSet())
-                .containsAll(products);
+                .containsAll(productNames);
     }
 
     public Set<Product> getProductByName(String productName) {

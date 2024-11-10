@@ -16,8 +16,8 @@ public class InventoryService {
         this.products = products;
     }
 
-    public void validateItemsExist(Set<String> products) {
-        boolean doesNotContainsAllProduct = !this.products.doesContainsAllProduct(products);
+    public void validateItemsExist(Set<String> productNames) {
+        boolean doesNotContainsAllProduct = !this.products.doesContainsAllProduct(productNames);
         if (doesNotContainsAllProduct) {
             throw new IllegalArgumentException(PRODUCT_NOT_FOUND_ERROR.message());
         }
