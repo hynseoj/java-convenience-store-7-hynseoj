@@ -1,8 +1,6 @@
 package store.application.facade;
 
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import store.application.service.InventoryService;
 import store.model.Products;
 import store.model.Promotions;
@@ -21,11 +19,6 @@ public class StoreFacade {
 
     public void purchase(Map<String, Integer> purchaseItems) {
         inventoryService.validateItemsExist(purchaseItems.keySet());
-        inventoryService.checkItemsStock(
-                purchaseItems.entrySet().stream()
-                        .collect(Collectors.toMap(
-                                entry -> products.getProductByName(entry.getKey()), Entry::getValue)
-                        )
-        );
+        inventoryService.checkItemsStock(purchaseItems);
     }
 }

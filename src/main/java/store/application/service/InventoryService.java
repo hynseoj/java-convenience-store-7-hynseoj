@@ -23,8 +23,9 @@ public class InventoryService {
         }
     }
 
-    public void checkItemsStock(Map<Set<Product>, Integer> purchaseItems) {
-        purchaseItems.forEach((product, quantity) -> {
+    public void checkItemsStock(Map<String, Integer> purchaseItems) {
+        purchaseItems.forEach((productName, quantity) -> {
+            Set<Product> product = products.getProductByName(productName);
             int totalStock = product.stream().mapToInt(Product::stock).sum();
             boolean isOutOfStock = quantity > totalStock;
             if (isOutOfStock) {
