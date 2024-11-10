@@ -21,6 +21,9 @@ public class Product {
     }
 
     public boolean isPromotionApplicable() {
+        if (promotion == null) {
+            return false;
+        }
         return promotion.isWithinPromotionPeriod();
     }
 

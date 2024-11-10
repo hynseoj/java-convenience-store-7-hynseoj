@@ -63,4 +63,13 @@ class ProductsTest {
         // when & then
         assertThat(products.getProductByName(productName)).hasSize(2);
     }
+
+    @Test
+    void 상품_이름_목록으로_프로모션_종류에_무관한_상품_집합을_조회할_수_있다() {
+        // given
+        Set<String> productNames = Set.of("오렌지 주스", "샌드위치", "풍선껌");
+
+        // when & then
+        assertThat(products.getProductsByNames(productNames)).hasSize(5);
+    }
 }

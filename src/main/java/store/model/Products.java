@@ -38,6 +38,16 @@ public class Products {
                 .collect(Collectors.toSet());
     }
 
+    public Set<Product> getProductsByNames(Set<String> productNames) {
+        Set<Product> productsByName = new HashSet<>();
+        productNames.forEach(productName ->
+                productsByName.addAll(products.stream()
+                        .filter(product -> product.name().equals(productName))
+                        .collect(Collectors.toSet()))
+        );
+        return productsByName;
+    }
+
     public Set<Product> products() {
         return products;
     }
