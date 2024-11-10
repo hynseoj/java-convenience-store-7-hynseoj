@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import store.common.dto.PurchaseRequest;
 import store.common.util.FileReader;
 import store.common.util.StringUtils;
 import store.model.Product;
@@ -55,12 +55,15 @@ public class InputHandler {
         }
     }
 
-    public Map<String, Integer> getPurchaseItems() {
+    public PurchaseRequest getPurchaseItems() {
         List<String> purchaseItems = StringUtils.splitWithDelimiter(inputView.getPurchaseItems(), ",");
         try {
-            return purchaseItems.stream()
-                    .map(purchaseItem -> StringUtils.extractFromRegex(purchaseItem, PURCHASE_ITEM_REGEX))
-                    .collect(Collectors.toMap(item -> item.get(0).strip(), item -> StringUtils.parseInt(item.get(1))));
+            return PurchaseRequest.from(
+                    purchaseItems.stream()
+                            .map(purchaseItem -> StringUtils.extractFromRegex(purchaseItem, PURCHASE_ITEM_REGEX))
+                            .collect(Collectors.toMap(item -> item.get(0).strip(),
+                                    item -> StringUtils.parseInt(item.get(1))))
+            );
         } catch (IllegalStateException e) {
             throw new IllegalArgumentException(INPUT_INVALID_FORMAT.message());
         }

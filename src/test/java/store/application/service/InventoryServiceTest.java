@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import store.common.dto.PurchaseRequest;
+import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
 import store.model.Products;
 import store.model.Promotion;
@@ -40,7 +42,7 @@ class InventoryServiceTest {
     @Test
     void 구매_상품이_상품_목록에_존재하지_않는_경우_예외처리한다() {
         // given
-        Set<String> productNames = Set.of("바나나");
+        PurchaseProductNames productNames = PurchaseProductNames.from(Set.of("바나나"));
 
         // when & then
         assertThatThrownBy(() -> inventoryService.validateItemsExist(productNames))
@@ -51,7 +53,7 @@ class InventoryServiceTest {
     @Test
     void 일반_재고_수량과_프로모션_재고_수량을_합산해서_구매_가능_여부를_확인한다() {
         // given
-        Map<String, Integer> purchaseItems = Map.of("오렌지 주스", 15);
+        PurchaseRequest purchaseItems = PurchaseRequest.from(Map.of("오렌지 주스", 15));
 
         // when & then
         assertThatCode(() -> inventoryService.checkItemsStock(purchaseItems)).doesNotThrowAnyException();
@@ -59,7 +61,7 @@ class InventoryServiceTest {
 
     @Test
     void 구매_수량이_일반_재고_수량과_프로모션_재고_수량의_합산_범위를_초과하는_경우_예외처리한다() {
-        Map<String, Integer> purchaseItems = Map.of("오렌지 주스", 30);
+        PurchaseRequest purchaseItems = PurchaseRequest.from(Map.of("오렌지 주스", 30));
 
         // when & then
         assertThatThrownBy(() -> inventoryService.checkItemsStock(purchaseItems))

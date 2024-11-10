@@ -1,7 +1,7 @@
 package store.controller;
 
-import java.util.Map;
 import store.application.facade.StoreFacade;
+import store.common.dto.PurchaseRequest;
 import store.model.Products;
 import store.model.Promotions;
 import store.view.OutputView;
@@ -22,7 +22,7 @@ public class StoreController {
         StoreFacade storeFacade = new StoreFacade(products, promotions);
         outputView.printStoreInventory(products);
 
-        Map<String, Integer> purchaseItems = inputHandler.getPurchaseItems();
+        PurchaseRequest purchaseItems = inputHandler.getPurchaseItems();
         storeFacade.purchase(purchaseItems);
     }
 }

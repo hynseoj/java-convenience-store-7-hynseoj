@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
 import store.model.Products;
 import store.model.Promotion;
@@ -36,7 +37,7 @@ class PromotionServiceTest {
     @Test
     void 구매_상품_목록에서_프로모션이_적용_가능한_상품_목록을_추출한다() {
         // given
-        Set<String> productNames = Set.of("오렌지 주스", "풍선껌");
+        PurchaseProductNames productNames = PurchaseProductNames.from(Set.of("오렌지 주스", "풍선껌"));
 
         // when
         Set<Product> promotionalProducts = promotionService.getPromotionalProducts(productNames);

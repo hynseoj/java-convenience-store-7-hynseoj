@@ -1,4 +1,4 @@
-package store.model.dto;
+package store.common.dto;
 
 public record PromotionResult(
         int discountAmount,

@@ -1,7 +1,7 @@
 package store.model.promotion;
 
+import store.common.dto.PromotionResult;
 import store.model.Product;
-import store.model.dto.PromotionResult;
 
 public interface PromotionStrategy {
 

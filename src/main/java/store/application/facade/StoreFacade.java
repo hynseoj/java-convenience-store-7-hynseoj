@@ -1,9 +1,10 @@
 package store.application.facade;
 
-import java.util.Map;
 import java.util.Set;
 import store.application.service.InventoryService;
 import store.application.service.PromotionService;
+import store.common.dto.PurchaseRequest;
+import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
 import store.model.Products;
 import store.model.Promotions;
@@ -22,8 +23,8 @@ public class StoreFacade {
         promotionService = new PromotionService(products);
     }
 
-    public void purchase(Map<String, Integer> purchaseItems) {
-        Set<String> productNames = purchaseItems.keySet();
+    public void purchase(PurchaseRequest purchaseItems) {
+        PurchaseProductNames productNames = purchaseItems.getProductNames();
 
         inventoryService.validateItemsExist(productNames);
         inventoryService.checkItemsStock(purchaseItems);
