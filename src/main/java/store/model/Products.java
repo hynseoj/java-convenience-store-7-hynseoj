@@ -23,6 +23,13 @@ public class Products {
         return new Products(products);
     }
 
+    public boolean doesContainsAllProduct(Set<String> products) {
+        return this.products.stream()
+                .map(Product::name)
+                .collect(Collectors.toSet())
+                .containsAll(products);
+    }
+
     public Set<Product> products() {
         return products;
     }
