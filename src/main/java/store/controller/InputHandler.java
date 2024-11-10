@@ -12,9 +12,9 @@ import store.common.dto.PurchaseRequest;
 import store.common.util.FileReader;
 import store.common.util.StringUtils;
 import store.model.Product;
-import store.model.Products;
+import store.model.ProductCatalog;
 import store.model.Promotion;
-import store.model.Promotions;
+import store.model.PromotionCatalog;
 import store.model.promotion.BuyNGetMFreePromotion;
 import store.model.promotion.PromotionStrategy;
 import store.view.InputView;
@@ -29,10 +29,10 @@ public class InputHandler {
         this.inputView = inputView;
     }
 
-    public Promotions getPromotions() {
+    public PromotionCatalog getPromotions() {
         try {
             List<String> fileLines = FileReader.readFile("src/main/resources/promotions.md");
-            return Promotions.from(fileLines.stream()
+            return PromotionCatalog.from(fileLines.stream()
                     .skip(1)
                     .map(fileLine -> makePromotion(StringUtils.splitWithDelimiter(fileLine, ",")))
                     .collect(Collectors.toMap(Promotion::name, promotion -> promotion))
@@ -42,12 +42,12 @@ public class InputHandler {
         }
     }
 
-    public Products getProducts(Promotions promotions) {
+    public ProductCatalog getProducts(PromotionCatalog promotionCatalog) {
         try {
             List<String> fileLines = FileReader.readFile("src/main/resources/product.md");
-            return Products.from(fileLines.stream()
+            return ProductCatalog.from(fileLines.stream()
                     .skip(1)
-                    .map(fileLine -> makeProduct(StringUtils.splitWithDelimiter(fileLine, ","), promotions))
+                    .map(fileLine -> makeProduct(StringUtils.splitWithDelimiter(fileLine, ","), promotionCatalog))
                     .collect(Collectors.toSet())
             );
         } catch (IOException e) {
@@ -81,11 +81,11 @@ public class InputHandler {
         return Promotion.of(name, promotionStrategy, startDate, endDate);
     }
 
-    private Product makeProduct(List<String> productValues, Promotions promotions) {
+    private Product makeProduct(List<String> productValues, PromotionCatalog promotionCatalog) {
         String name = productValues.get(0);
         int price = StringUtils.parseInt(productValues.get(1));
         int stock = StringUtils.parseInt(productValues.get(2));
-        Promotion promotion = promotions.getPromotionByName(productValues.get(3));
+        Promotion promotion = promotionCatalog.getPromotionByName(productValues.get(3));
         return Product.of(name, price, stock, promotion);
     }
 }

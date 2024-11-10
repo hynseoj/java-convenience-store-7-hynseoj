@@ -4,15 +4,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Products {
+public class ProductCatalog {
 
     private final Set<Product> products;
 
-    private Products(Set<Product> products) {
+    private ProductCatalog(Set<Product> products) {
         this.products = products;
     }
 
-    public static Products from(Set<Product> products) {
+    public static ProductCatalog from(Set<Product> products) {
         products = new HashSet<>(products);
         Set<Product> additionalProducts = products.stream()
                 .collect(Collectors.groupingBy(Product::name))
@@ -22,7 +22,7 @@ public class Products {
                 .collect(Collectors.toSet());
 
         products.addAll(additionalProducts);
-        return new Products(products);
+        return new ProductCatalog(products);
     }
 
     public boolean doesContainsAllProduct(Set<String> productNames) {

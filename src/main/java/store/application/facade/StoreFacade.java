@@ -6,21 +6,21 @@ import store.application.service.PromotionService;
 import store.common.dto.PurchaseRequest;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
-import store.model.Products;
-import store.model.Promotions;
+import store.model.ProductCatalog;
+import store.model.PromotionCatalog;
 
 public class StoreFacade {
 
-    private final Products products;
-    private final Promotions promotions;
+    private final ProductCatalog productCatalog;
+    private final PromotionCatalog promotionCatalog;
     private final InventoryService inventoryService;
     private final PromotionService promotionService;
 
-    public StoreFacade(Products products, Promotions promotions) {
-        this.products = products;
-        this.promotions = promotions;
-        inventoryService = new InventoryService(products);
-        promotionService = new PromotionService(products);
+    public StoreFacade(ProductCatalog productCatalog, PromotionCatalog promotionCatalog) {
+        this.productCatalog = productCatalog;
+        this.promotionCatalog = promotionCatalog;
+        inventoryService = new InventoryService(productCatalog);
+        promotionService = new PromotionService(productCatalog);
     }
 
     public void purchase(PurchaseRequest purchaseItems) {

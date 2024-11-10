@@ -13,18 +13,18 @@ import org.junit.jupiter.api.Test;
 import store.common.dto.PurchaseRequest;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
-import store.model.Products;
+import store.model.ProductCatalog;
 import store.model.Promotion;
 import store.model.promotion.BuyNGetMFreePromotion;
 
 class InventoryServiceTest {
 
-    private Products products;
+    private ProductCatalog productCatalog;
     private InventoryService inventoryService;
 
     @BeforeEach
     void setUp() {
-        products = Products.from(
+        productCatalog = ProductCatalog.from(
                 Set.of(
                         Product.of("오렌지 주스", 3000, 10, null),
                         Product.of("오렌지 주스", 3000, 10,
@@ -36,7 +36,7 @@ class InventoryServiceTest {
                         Product.of("풍선껌", 500, 5, null)
                 )
         );
-        inventoryService = new InventoryService(products);
+        inventoryService = new InventoryService(productCatalog);
     }
 
     @Test

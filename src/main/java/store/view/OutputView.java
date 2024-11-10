@@ -2,7 +2,7 @@ package store.view;
 
 import java.text.NumberFormat;
 import store.model.Product;
-import store.model.Products;
+import store.model.ProductCatalog;
 import store.model.Promotion;
 
 public class OutputView {
@@ -11,9 +11,9 @@ public class OutputView {
     private static final String PRODUCT_MESSAGE = "- %s %s원 %s %s";
     private static final String OUT_OF_STOCK_MESSAGE = "재고 없음";
 
-    public void printStoreInventory(Products products) {
+    public void printStoreInventory(ProductCatalog productCatalog) {
         System.out.println(INTRO_MESSAGE);
-        products.products().forEach(this::printProduct);
+        productCatalog.products().forEach(this::printProduct);
     }
 
     private void printProduct(Product product) {

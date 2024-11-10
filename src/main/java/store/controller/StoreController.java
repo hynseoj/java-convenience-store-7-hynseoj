@@ -2,8 +2,8 @@ package store.controller;
 
 import store.application.facade.StoreFacade;
 import store.common.dto.PurchaseRequest;
-import store.model.Products;
-import store.model.Promotions;
+import store.model.ProductCatalog;
+import store.model.PromotionCatalog;
 import store.view.OutputView;
 
 public class StoreController {
@@ -17,10 +17,10 @@ public class StoreController {
     }
 
     public void run() {
-        Promotions promotions = inputHandler.getPromotions();
-        Products products = inputHandler.getProducts(promotions);
-        StoreFacade storeFacade = new StoreFacade(products, promotions);
-        outputView.printStoreInventory(products);
+        PromotionCatalog promotionCatalog = inputHandler.getPromotions();
+        ProductCatalog productCatalog = inputHandler.getProducts(promotionCatalog);
+        StoreFacade storeFacade = new StoreFacade(productCatalog, promotionCatalog);
+        outputView.printStoreInventory(productCatalog);
 
         PurchaseRequest purchaseItems = inputHandler.getPurchaseItems();
         storeFacade.purchase(purchaseItems);

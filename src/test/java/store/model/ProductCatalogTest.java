@@ -10,13 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import store.model.promotion.BuyNGetMFreePromotion;
 
-class ProductsTest {
+class ProductCatalogTest {
 
-    private Products products;
+    private ProductCatalog productCatalog;
 
     @BeforeEach
     void setUp() {
-        products = Products.from(
+        productCatalog = ProductCatalog.from(
                 Set.of(
                         Product.of("오렌지 주스", 3000, 10, null),
                         Product.of("오렌지 주스", 3000, 10,
@@ -33,7 +33,7 @@ class ProductsTest {
     @Test
     void 상품_목록을_생성할_때_입력된_집합에_기본_상품이_없으면_추가해준다() {
         // when & then
-        assertTrue(products.products().stream()
+        assertTrue(productCatalog.products().stream()
                 .anyMatch(product -> product.name().equals("샌드위치") && product.promotion() == null));
     }
 
@@ -43,7 +43,7 @@ class ProductsTest {
         Set<String> productNames = Set.of("오렌지 주스", "샌드위치");
 
         // when & then
-        assertTrue(products.doesContainsAllProduct(productNames));
+        assertTrue(productCatalog.doesContainsAllProduct(productNames));
     }
 
     @Test
@@ -52,7 +52,7 @@ class ProductsTest {
         Set<String> productNames = Set.of("오렌지 주스", "초콜릿");
 
         // when & then
-        assertFalse(products.doesContainsAllProduct(productNames));
+        assertFalse(productCatalog.doesContainsAllProduct(productNames));
     }
 
     @Test
@@ -61,7 +61,7 @@ class ProductsTest {
         String productName = "오렌지 주스";
 
         // when & then
-        assertThat(products.getProductByName(productName)).hasSize(2);
+        assertThat(productCatalog.getProductByName(productName)).hasSize(2);
     }
 
     @Test
@@ -70,6 +70,6 @@ class ProductsTest {
         Set<String> productNames = Set.of("오렌지 주스", "샌드위치", "풍선껌");
 
         // when & then
-        assertThat(products.getProductsByNames(productNames)).hasSize(5);
+        assertThat(productCatalog.getProductsByNames(productNames)).hasSize(5);
     }
 }
