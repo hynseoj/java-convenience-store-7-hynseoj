@@ -61,7 +61,7 @@ class ProductCatalogTest {
         String productName = "오렌지 주스";
 
         // when & then
-        assertThat(productCatalog.getProductByName(productName)).hasSize(2);
+        assertThat(productCatalog.getProductByName(productName).products()).hasSize(2);
     }
 
     @Test
@@ -70,6 +70,6 @@ class ProductCatalogTest {
         Set<String> productNames = Set.of("오렌지 주스", "샌드위치", "풍선껌");
 
         // when & then
-        assertThat(productCatalog.getProductsByNames(productNames)).hasSize(5);
+        assertThat(productCatalog.getProductsByNames(productNames).products()).hasSize(5);
     }
 }

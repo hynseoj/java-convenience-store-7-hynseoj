@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 public class ProductCatalog {
 
-    private final Set<Product> products;
+    private final Products products;
 
-    private ProductCatalog(Set<Product> products) {
+    private ProductCatalog(Products products) {
         this.products = products;
     }
 
@@ -22,33 +22,35 @@ public class ProductCatalog {
                 .collect(Collectors.toSet());
 
         products.addAll(additionalProducts);
-        return new ProductCatalog(products);
+        return new ProductCatalog(Products.from(products));
     }
 
     public boolean doesContainsAllProduct(Set<String> productNames) {
-        return this.products.stream()
+        return this.products.products().stream()
                 .map(Product::name)
                 .collect(Collectors.toSet())
                 .containsAll(productNames);
     }
 
-    public Set<Product> getProductByName(String productName) {
-        return this.products.stream()
-                .filter(product -> product.name().equals(productName))
-                .collect(Collectors.toSet());
+    public Products getProductByName(String productName) {
+        return Products.from(
+                this.products.products().stream()
+                        .filter(product -> product.name().equals(productName))
+                        .collect(Collectors.toSet())
+        );
     }
 
-    public Set<Product> getProductsByNames(Set<String> productNames) {
+    public Products getProductsByNames(Set<String> productNames) {
         Set<Product> productsByName = new HashSet<>();
         productNames.forEach(productName ->
-                productsByName.addAll(products.stream()
+                productsByName.addAll(products.products().stream()
                         .filter(product -> product.name().equals(productName))
                         .collect(Collectors.toSet()))
         );
-        return productsByName;
+        return Products.from(productsByName);
     }
 
     public Set<Product> products() {
-        return products;
+        return products.products();
     }
 }

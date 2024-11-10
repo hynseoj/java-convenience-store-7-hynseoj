@@ -3,11 +3,11 @@ package store.application.service;
 import static store.common.constant.ErrorMessage.PRODUCT_NOT_FOUND_ERROR;
 import static store.common.constant.ErrorMessage.PRODUCT_OUT_OF_STOCK;
 
-import java.util.Set;
 import store.common.dto.PurchaseRequest;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
 import store.model.ProductCatalog;
+import store.model.Products;
 
 public class InventoryService {
 
@@ -26,8 +26,8 @@ public class InventoryService {
 
     public void checkItemsStock(PurchaseRequest purchaseItems) {
         purchaseItems.cart().forEach((productName, quantity) -> {
-            Set<Product> product = productCatalog.getProductByName(productName);
-            int totalStock = product.stream().mapToInt(Product::stock).sum();
+            Products product = productCatalog.getProductByName(productName);
+            int totalStock = product.products().stream().mapToInt(Product::stock).sum();
             boolean isOutOfStock = quantity > totalStock;
             if (isOutOfStock) {
                 throw new IllegalArgumentException(PRODUCT_OUT_OF_STOCK.message());

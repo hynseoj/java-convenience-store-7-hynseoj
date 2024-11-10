@@ -1,12 +1,11 @@
 package store.application.facade;
 
-import java.util.Set;
 import store.application.service.InventoryService;
 import store.application.service.PromotionService;
 import store.common.dto.PurchaseRequest;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
-import store.model.Product;
 import store.model.ProductCatalog;
+import store.model.Products;
 import store.model.PromotionCatalog;
 
 public class StoreFacade {
@@ -29,6 +28,6 @@ public class StoreFacade {
         inventoryService.validateItemsExist(productNames);
         inventoryService.checkItemsStock(purchaseItems);
 
-        Set<Product> promotionalProducts = promotionService.getPromotionalProducts(productNames);
+        Products promotionalProducts = promotionService.getPromotionalProducts(productNames);
     }
 }

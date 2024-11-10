@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
 import store.model.ProductCatalog;
+import store.model.Products;
 import store.model.Promotion;
 import store.model.promotion.BuyNGetMFreePromotion;
 
@@ -40,10 +41,10 @@ class PromotionServiceTest {
         PurchaseProductNames productNames = PurchaseProductNames.from(Set.of("오렌지 주스", "풍선껌"));
 
         // when
-        Set<Product> promotionalProducts = promotionService.getPromotionalProducts(productNames);
+        Products promotionalProducts = promotionService.getPromotionalProducts(productNames);
 
         // then
-        promotionalProducts.forEach(product -> System.out.println(product.name() + product.promotion()));
-        assertThat(promotionalProducts).hasSize(1);
+        promotionalProducts.products().forEach(product -> System.out.println(product.name() + product.promotion()));
+        assertThat(promotionalProducts.products()).hasSize(1);
     }
 }
