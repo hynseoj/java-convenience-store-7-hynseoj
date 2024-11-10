@@ -30,6 +30,12 @@ public class Products {
                 .containsAll(products);
     }
 
+    public Set<Product> getProductByName(String productName) {
+        return this.products.stream()
+                .filter(product -> product.name().equals(productName))
+                .collect(Collectors.toSet());
+    }
+
     public Set<Product> products() {
         return products;
     }
