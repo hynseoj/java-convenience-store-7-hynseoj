@@ -81,8 +81,8 @@ public class InputHandler {
     private Product makeProduct(List<String> productValues, Promotions promotions) {
         String name = productValues.get(0);
         int price = StringUtils.parseInt(productValues.get(1));
-        int quantity = StringUtils.parseInt(productValues.get(2));
+        int stock = StringUtils.parseInt(productValues.get(2));
         Promotion promotion = promotions.getPromotionByName(productValues.get(3));
-        return Product.of(name, price, quantity, promotion);
+        return Product.of(name, price, stock, promotion);
     }
 }

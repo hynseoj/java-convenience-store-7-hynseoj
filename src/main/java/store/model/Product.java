@@ -6,18 +6,18 @@ public class Product {
 
     private final String name;
     private final int price;
-    private final int quantity;
+    private final int stock;
     private final Promotion promotion;
 
-    private Product(String name, int price, int quantity, Promotion promotion) {
+    private Product(String name, int price, int stock, Promotion promotion) {
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
+        this.stock = stock;
         this.promotion = promotion;
     }
 
-    public static Product of(String name, int price, int quantity, Promotion promotion) {
-        return new Product(name, price, quantity, promotion);
+    public static Product of(String name, int price, int stock, Promotion promotion) {
+        return new Product(name, price, stock, promotion);
     }
 
     public boolean isPromotionApplicable() {
@@ -32,8 +32,8 @@ public class Product {
         return price;
     }
 
-    public int quantity() {
-        return quantity;
+    public int stock() {
+        return stock;
     }
 
     public Promotion promotion() {

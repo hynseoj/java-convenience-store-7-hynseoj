@@ -23,16 +23,16 @@ public class OutputView {
                 PRODUCT_MESSAGE,
                 product.name(),
                 formatter.format(product.price()),
-                getQuantityValue(product.quantity()),
+                getStockValue(product.stock()),
                 getPromotionNameValue(product.promotion())
         );
     }
 
-    private String getQuantityValue(int quantity) {
-        if (quantity == 0) {
+    private String getStockValue(int stock) {
+        if (stock == 0) {
             return OUT_OF_STOCK_MESSAGE;
         }
-        return String.valueOf(quantity);
+        return String.valueOf(stock);
     }
 
     private String getPromotionNameValue(Promotion promotion) {
