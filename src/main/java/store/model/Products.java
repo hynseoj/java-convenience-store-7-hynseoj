@@ -1,5 +1,6 @@
 package store.model;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ public class Products {
     }
 
     public static Products from(Set<Product> products) {
+        products = new HashSet<>(products);
         Set<Product> additionalProducts = products.stream()
                 .collect(Collectors.groupingBy(Product::name))
                 .entrySet().stream()
