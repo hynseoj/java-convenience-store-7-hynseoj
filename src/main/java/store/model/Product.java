@@ -2,6 +2,7 @@ package store.model;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import store.common.dto.PromotionConditionResult;
 import store.common.dto.PromotionResult;
 
 public class Product {
@@ -27,6 +28,14 @@ public class Product {
             return false;
         }
         return promotion.isWithinPromotionPeriod();
+    }
+
+    public PromotionResult applyPromotion(int quantity) {
+        return promotion.applyPromotion(this, quantity);
+    }
+
+    public PromotionConditionResult checkPromotionCondition(int quantity) {
+        return promotion.checkCondition(this, quantity);
     }
 
     public boolean isInStock(int quantity) {

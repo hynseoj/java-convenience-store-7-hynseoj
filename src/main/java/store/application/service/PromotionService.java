@@ -1,6 +1,7 @@
 package store.application.service;
 
 import java.util.stream.Collectors;
+import store.common.dto.PromotionConditionResult;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Product;
 import store.model.ProductCatalog;
@@ -20,5 +21,9 @@ public class PromotionService {
                         .filter(Product::isPromotionApplicable)
                         .collect(Collectors.toSet())
         );
+    }
+
+    public PromotionConditionResult checkPromotionCondition(Product product, int quantity) {
+        return product.checkPromotionCondition(quantity);
     }
 }

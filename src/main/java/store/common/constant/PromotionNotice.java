@@ -2,7 +2,8 @@ package store.common.constant;
 
 public enum PromotionNotice {
     DEFAULT_NOTICE(""),
-    GET_FREE_M_NOTICE("현재 %s은(는) %d개를 무료로 더 받을 수 있습니다.");
+    GET_FREE_M_NOTICE("현재 %s은(는) %d개를 무료로 더 받을 수 있습니다."),
+    OUT_OF_STOCK_NOTICE("현재 %s %d개는 프로모션 할인이 적용되지 않습니다.");
 
     private final String message;
 

@@ -8,7 +8,7 @@ import store.model.Promotion;
 public class OutputView {
 
     private static final String INTRO_MESSAGE = "안녕하세요. W편의점입니다.\n현재 보유하고 있는 상품입니다.";
-    private static final String PRODUCT_MESSAGE = "- %s %s원 %s %s";
+    private static final String PRODUCT_MESSAGE = "- %s %s원 %s %s\n";
     private static final String OUT_OF_STOCK_MESSAGE = "재고 없음";
 
     public void printStoreInventory(ProductCatalog productCatalog) {
