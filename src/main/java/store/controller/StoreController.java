@@ -90,5 +90,8 @@ public class StoreController {
         cart.cart().forEach((product, quantity) -> inventoryService.reduceStock(product, quantity));
 
         outputView.printStoreInventory(productCatalog);
+
+        outputView.printMembershipNotice();
+        boolean hasMembership = inputHandler.getYesOrNo();
     }
 }

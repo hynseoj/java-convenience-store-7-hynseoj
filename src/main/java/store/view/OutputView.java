@@ -24,6 +24,10 @@ public class OutputView {
         System.out.print(message + "그래도 구매하시겠습니까?");
     }
 
+    public void printMembershipNotice() {
+        System.out.print("멤버십 할인을 받으시겠습니까?");
+    }
+
     private void printProduct(Product product) {
         NumberFormat formatter = NumberFormat.getInstance();
 
