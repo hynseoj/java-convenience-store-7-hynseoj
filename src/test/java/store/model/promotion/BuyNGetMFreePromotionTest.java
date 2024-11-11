@@ -2,7 +2,7 @@ package store.model.promotion;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import store.model.Product;
@@ -16,7 +16,7 @@ class BuyNGetMFreePromotionTest {
         // given
         PromotionStrategy promotionStrategy = new BuyNGetMFreePromotion(n, m);
         Product product = Product.of("바나나", 700, 20,
-                Promotion.of("과일 할인", promotionStrategy, LocalDateTime.MIN, LocalDateTime.MAX));
+                Promotion.of("과일 할인", promotionStrategy, LocalDate.MIN, LocalDate.MAX));
 
         // when & then
         assertEquals(promotionStrategy.applyPromotion(product, quantity).freeQuantity(), totalFreeQuantity);

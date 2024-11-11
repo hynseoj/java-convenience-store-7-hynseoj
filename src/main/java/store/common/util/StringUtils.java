@@ -24,6 +24,9 @@ public class StringUtils {
 
     public static List<String> extractFromRegex(String message, Pattern regex) {
         Matcher matcher = regex.matcher(message);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException();
+        }
         return IntStream.range(1, matcher.groupCount() + 1)
                 .mapToObj(matcher::group)
                 .toList();

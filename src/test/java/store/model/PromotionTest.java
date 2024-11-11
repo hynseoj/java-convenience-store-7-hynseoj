@@ -3,7 +3,7 @@ package store.model;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import store.model.promotion.BuyNGetMFreePromotion;
 
@@ -15,8 +15,8 @@ class PromotionTest {
         Promotion promotion = Promotion.of(
                 "진행 중인 프로모션",
                 new BuyNGetMFreePromotion(1, 1),
-                LocalDateTime.MIN,
-                LocalDateTime.MAX
+                LocalDate.MIN,
+                LocalDate.MAX
         );
 
         // when & then
@@ -29,8 +29,8 @@ class PromotionTest {
         Promotion promotion = Promotion.of(
                 "지난 프로모션",
                 new BuyNGetMFreePromotion(1, 1),
-                LocalDateTime.MIN,
-                LocalDateTime.of(2024, 10, 31, 23, 59)
+                LocalDate.MIN,
+                LocalDate.of(2024, 10, 31)
         );
 
         // when & then

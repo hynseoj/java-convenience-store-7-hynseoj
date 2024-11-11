@@ -16,6 +16,10 @@ public class OutputView {
         productCatalog.products().forEach(this::printProduct);
     }
 
+    public void printPromotionNotice(String message) {
+        System.out.println(message);
+    }
+
     private void printProduct(Product product) {
         NumberFormat formatter = NumberFormat.getInstance();
 

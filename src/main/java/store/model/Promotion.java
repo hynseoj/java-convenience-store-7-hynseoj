@@ -1,19 +1,20 @@
 package store.model;
 
-import camp.nextstep.edu.missionutils.DateTimes;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
+import store.common.dto.PromotionConditionResult;
+import store.common.dto.PromotionResult;
 import store.model.promotion.PromotionStrategy;
 
 public class Promotion {
 
     private final String name;
     private final PromotionStrategy promotionStrategy;
-    private final LocalDateTime startDate;
-    private final LocalDateTime endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
 
     private Promotion(
-            String name, PromotionStrategy promotionStrategy, LocalDateTime startDate, LocalDateTime endDate
+            String name, PromotionStrategy promotionStrategy, LocalDate startDate, LocalDate endDate
     ) {
         this.name = name;
         this.promotionStrategy = promotionStrategy;
@@ -22,15 +23,23 @@ public class Promotion {
     }
 
     public static Promotion of(
-            String name, PromotionStrategy promotionStrategy, LocalDateTime startDate, LocalDateTime endDate
+            String name, PromotionStrategy promotionStrategy, LocalDate startDate, LocalDate endDate
     ) {
         return new Promotion(name, promotionStrategy, startDate, endDate);
     }
 
     public boolean isWithinPromotionPeriod() {
-        LocalDateTime now = DateTimes.now();
+        LocalDate now = LocalDate.now();
         return (now.isEqual(startDate) || now.isAfter(startDate)) &&
                 (now.isEqual(endDate) || now.isBefore(endDate));
+    }
+
+    public PromotionResult applyPromotion(Product product, int quantity) {
+        return promotionStrategy.applyPromotion(product, quantity);
+    }
+
+    public PromotionConditionResult checkCondition(Product product, int quantity) {
+        return promotionStrategy.checkCondition(product, quantity);
     }
 
     public String name() {

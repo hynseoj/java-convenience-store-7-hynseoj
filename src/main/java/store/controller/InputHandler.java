@@ -3,7 +3,7 @@ package store.controller;
 import static store.common.constant.ErrorMessage.INPUT_INVALID_FORMAT;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -44,7 +44,7 @@ public class InputHandler {
 
     public ProductCatalog getProducts(PromotionCatalog promotionCatalog) {
         try {
-            List<String> fileLines = FileReader.readFile("src/main/resources/product.md");
+            List<String> fileLines = FileReader.readFile("src/main/resources/products.md");
             return ProductCatalog.from(fileLines.stream()
                     .skip(1)
                     .map(fileLine -> makeProduct(StringUtils.splitWithDelimiter(fileLine, ","), promotionCatalog))
@@ -70,14 +70,14 @@ public class InputHandler {
     }
 
     private Promotion makePromotion(List<String> promotionValues) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
         String name = promotionValues.get(0);
         int purchaseQuantity = StringUtils.parseInt(promotionValues.get(1));
         int freeQuantity = StringUtils.parseInt(promotionValues.get(2));
         PromotionStrategy promotionStrategy = new BuyNGetMFreePromotion(purchaseQuantity, freeQuantity);
-        LocalDateTime startDate = LocalDateTime.parse(promotionValues.get(3), formatter);
-        LocalDateTime endDate = LocalDateTime.parse(promotionValues.get(4), formatter);
+        LocalDate startDate = LocalDate.parse(promotionValues.get(3), formatter);
+        LocalDate endDate = LocalDate.parse(promotionValues.get(4), formatter);
         return Promotion.of(name, promotionStrategy, startDate, endDate);
     }
 

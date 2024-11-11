@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static store.common.constant.ErrorMessage.PRODUCT_NOT_FOUND_ERROR;
 import static store.common.constant.ErrorMessage.PRODUCT_OUT_OF_STOCK;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,10 +29,10 @@ class InventoryServiceTest {
                         Product.of("오렌지 주스", 3000, 10, null),
                         Product.of("오렌지 주스", 3000, 10,
                                 Promotion.of("과일드세요",
-                                        new BuyNGetMFreePromotion(2, 1), LocalDateTime.MIN, LocalDateTime.MAX)),
+                                        new BuyNGetMFreePromotion(2, 1), LocalDate.MIN, LocalDate.MAX)),
                         Product.of("샌드위치", 2500, 10,
                                 Promotion.of("아침드세요",
-                                        new BuyNGetMFreePromotion(2, 1), LocalDateTime.MIN, LocalDateTime.MAX)),
+                                        new BuyNGetMFreePromotion(2, 1), LocalDate.MIN, LocalDate.MAX)),
                         Product.of("풍선껌", 500, 5, null)
                 )
         );
