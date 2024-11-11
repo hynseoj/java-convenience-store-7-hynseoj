@@ -102,6 +102,9 @@ public class StoreController {
             });
         }
         membershipDiscount.updateAndGet(value -> value * 30 / 100);
+        if (membershipDiscount.get() > 8000) {
+            membershipDiscount.updateAndGet(value -> 8000);
+        }
         System.out.println(membershipDiscount.get());
     }
 }
