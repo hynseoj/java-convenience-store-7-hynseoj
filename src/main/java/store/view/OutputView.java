@@ -17,6 +17,7 @@ public class OutputView {
     public void printStoreInventory(ProductCatalog productCatalog) {
         System.out.println(INTRO_MESSAGE);
         productCatalog.products().forEach(this::printProduct);
+        System.out.println();
     }
 
     public void printGetFreeNotice(String message) {
@@ -65,6 +66,10 @@ public class OutputView {
         receiptBuilder.append(String.format("%-10s %,15d\n", "내실돈", receipt.paymentPrice()));
 
         System.out.println(receiptBuilder);
+    }
+
+    public void printRepurchaseNotice() {
+        System.out.print("감사합니다. 구매하고 싶은 다른 상품이 있나요?");
     }
 
     private void printProduct(Product product) {

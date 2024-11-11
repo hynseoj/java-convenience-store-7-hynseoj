@@ -26,6 +26,8 @@ public class StoreController {
     private final OutputView outputView;
     private InventoryService inventoryService;
     private PromotionService promotionService;
+    private ProductCatalog productCatalog;
+    private PromotionCatalog promotionCatalog;
 
     public StoreController(InputHandler inputHandler, OutputView outputView) {
         this.inputHandler = inputHandler;
@@ -33,8 +35,12 @@ public class StoreController {
     }
 
     public void run() {
-        PromotionCatalog promotionCatalog = inputHandler.getPromotions();
-        ProductCatalog productCatalog = inputHandler.getProducts(promotionCatalog);
+        if (promotionCatalog == null || productCatalog == null) {
+            promotionCatalog = inputHandler.getPromotions();
+            productCatalog = inputHandler.getProducts(promotionCatalog);
+            inventoryService = new InventoryService(productCatalog);
+            promotionService = new PromotionService(productCatalog);
+        }
         outputView.printStoreInventory(productCatalog);
 
         inventoryService = new InventoryService(productCatalog);
@@ -115,6 +121,10 @@ public class StoreController {
 
         cart.cart().forEach((product, quantity) -> inventoryService.reduceStock(product, quantity));
 
-        outputView.printStoreInventory(productCatalog);
+        outputView.printRepurchaseNotice();
+        boolean wantToRepurchase = inputHandler.getYesOrNo();
+        if (wantToRepurchase) {
+            run();
+        }
     }
 }
