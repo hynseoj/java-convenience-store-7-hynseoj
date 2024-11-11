@@ -3,11 +3,9 @@ package store.controller;
 import static store.common.constant.PromotionNotice.GET_FREE_M_NOTICE;
 import static store.common.constant.PromotionNotice.OUT_OF_STOCK_NOTICE;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import store.application.service.InventoryService;
-import store.application.service.PromotionService;
+import java.util.stream.Collectors;
 import store.common.dto.PromotionConditionResult;
 import store.common.dto.PromotionResult;
 import store.common.dto.PurchaseRequest;
@@ -28,99 +26,136 @@ public class StoreController {
     private final ProductCatalog productCatalog;
     private final PromotionCatalog promotionCatalog;
 
-    private InventoryService inventoryService;
-    private PromotionService promotionService;
-
     public StoreController(InputHandler inputHandler, OutputView outputView) {
         this.inputHandler = inputHandler;
         this.outputView = outputView;
         promotionCatalog = inputHandler.getPromotions();
         productCatalog = inputHandler.getProducts(promotionCatalog);
-        inventoryService = new InventoryService(productCatalog);
-        promotionService = new PromotionService(productCatalog);
     }
 
     public void run() {
+        PurchaseRequest purchaseItems = getPurchaseRequest();
+        Cart cart = Cart.empty();
+
+        Products promotionalProducts = getPromotionalProducts(purchaseItems.getProductNames());
+        List<PromotionResult> promotionResults = addPromotionalProductToCart(promotionalProducts, purchaseItems, cart);
+        addRegularProductToCart(purchaseItems, cart);
+        int membershipDiscount = applyMembership(cart, promotionalProducts);
+        purchaseProducts(cart);
+        printReceipt(cart, promotionResults, membershipDiscount);
+        repurchaseIfWant();
+    }
+
+    private PurchaseRequest getPurchaseRequest() {
         outputView.printStoreInventory(productCatalog);
+        return inputHandler.getPurchaseItems(productCatalog);
+    }
 
-        inventoryService = new InventoryService(productCatalog);
-        promotionService = new PromotionService(productCatalog);
-
-        PurchaseRequest purchaseItems = inputHandler.getPurchaseItems(productCatalog);
-        PurchaseProductNames productNames = purchaseItems.getProductNames();
-
-        Products promotionalProducts = promotionService.getPromotionalProducts(productNames);
-
-        Cart cart = Cart.from(new HashMap<>());
-        promotionalProducts.products().forEach(product -> {
-            int purchaseQuantity = purchaseItems.cart().get(product.name());
-            PromotionConditionResult conditionResult = promotionService.checkPromotionCondition(
-                    product, purchaseQuantity
-            );
-
-            if (GET_FREE_M_NOTICE.matches(conditionResult.message())) {
-                outputView.printGetFreeNotice(conditionResult.message());
-                boolean wantToAdd = inputHandler.getYesOrNo();
-                if (wantToAdd) {
-                    cart.addProduct(product, purchaseQuantity + 1);
-                } else {
-                    cart.addProduct(product, purchaseQuantity);
-                }
-                purchaseItems.cart().remove(product.name());
-            } else if (OUT_OF_STOCK_NOTICE.matches(conditionResult.message())) {
-                outputView.printPromotionOutOfStockNotice(conditionResult.message());
-                boolean wantToBuy = inputHandler.getYesOrNo();
-                cart.addProduct(product, conditionResult.stockUsed());
-                if (wantToBuy) {
-                    purchaseItems.cart().replace(product.name(), purchaseQuantity - conditionResult.stockUsed());
-                } else {
-                    purchaseItems.cart().remove(product.name());
-                }
-            } else {
-                cart.addProduct(product, conditionResult.stockUsed());
-                purchaseItems.cart().replace(product.name(), purchaseQuantity - conditionResult.stockUsed());
-            }
-        });
-
-        purchaseItems.cart().keySet().forEach(productName -> {
+    private void addRegularProductToCart(PurchaseRequest purchaseItems, Cart cart) {
+        purchaseItems.items().keySet().forEach(productName -> {
             Product product = productCatalog.getProductByName(productName).products().stream()
                     .findFirst()
-                    .orElseThrow();
-            if (product.promotion() != null) {
-                System.out.println("이상함");
-            }
-            cart.addProduct(product, purchaseItems.cart().get(productName));
+                    .orElseThrow(IllegalArgumentException::new);
+            cart.addProduct(product, purchaseItems.items().get(productName));
         });
+    }
 
+    private List<PromotionResult> addPromotionalProductToCart(
+            Products promotionalProducts, PurchaseRequest purchaseItems, Cart cart
+    ) {
+        promotionalProducts.products().forEach(product -> {
+            int purchaseQuantity = purchaseItems.items().get(product.name());
+            PromotionConditionResult conditionResult = product.checkPromotionCondition(purchaseQuantity);
+            handlePromotionCondition(purchaseItems, cart, product, conditionResult);
+        });
+        return applyPromotion(cart);
+    }
+
+    private Products getPromotionalProducts(PurchaseProductNames productNames) {
+        return Products.from(
+                productCatalog.getProductsByNames(productNames.productNames()).products().stream()
+                        .filter(Product::isPromotionApplicable)
+                        .collect(Collectors.toSet())
+        );
+    }
+
+    private List<PromotionResult> applyPromotion(Cart cart) {
+        return cart.cart().keySet().stream()
+                .filter(Product::isPromotionApplicable)
+                .map(product -> product.applyPromotion(cart.cart().get(product)))
+                .toList();
+    }
+
+    private void handlePromotionCondition(
+            PurchaseRequest purchaseItems, Cart cart, Product product, PromotionConditionResult conditionResult
+    ) {
+        if (GET_FREE_M_NOTICE.matches(conditionResult.message())) {
+            handleGetFreeCondition(purchaseItems, cart, product, conditionResult);
+            return;
+        }
+        if (OUT_OF_STOCK_NOTICE.matches(conditionResult.message())) {
+            handleOutOfPromotionStock(purchaseItems, cart, product, conditionResult);
+            return;
+        }
+        cart.addProduct(product, conditionResult.stockUsed());
+        purchaseItems.items()
+                .replace(product.name(), purchaseItems.items().get(product.name()) - conditionResult.stockUsed());
+    }
+
+    private void handleOutOfPromotionStock(
+            PurchaseRequest purchaseItems, Cart cart, Product product, PromotionConditionResult conditionResult
+    ) {
+        int purchaseQuantity = purchaseItems.items().get(product.name());
+        outputView.printPromotionOutOfStockNotice(conditionResult.message());
+        cart.addProduct(product, conditionResult.stockUsed());
+        if (inputHandler.isAffirmative()) {
+            purchaseItems.items().replace(product.name(), purchaseQuantity - conditionResult.stockUsed());
+            return;
+        }
+        purchaseItems.items().remove(product.name());
+    }
+
+    private void handleGetFreeCondition(
+            PurchaseRequest purchaseItems, Cart cart, Product product, PromotionConditionResult conditionResult
+    ) {
+        int purchaseQuantity = purchaseItems.items().get(product.name());
+        outputView.printGetFreeNotice(conditionResult.message());
+        if (inputHandler.isAffirmative()) {
+            cart.addProduct(product, purchaseQuantity + 1);
+            purchaseItems.items().remove(product.name());
+            return;
+        }
+        cart.addProduct(product, purchaseQuantity);
+        purchaseItems.items().remove(product.name());
+    }
+
+    private int applyMembership(Cart cart, Products promotionalProducts) {
         outputView.printMembershipNotice();
-        boolean hasMembership = inputHandler.getYesOrNo();
-        AtomicInteger membershipDiscount = new AtomicInteger();
-        if (hasMembership) {
+        AtomicInteger discountAmount = new AtomicInteger();
+        if (inputHandler.isAffirmative()) {
             cart.cart().forEach((product, quantity) -> {
                 if (promotionalProducts.products().contains(product)) {
                     return;
                 }
-                membershipDiscount.addAndGet(product.price() * quantity);
+                discountAmount.addAndGet(product.price() * quantity);
             });
         }
-        membershipDiscount.updateAndGet(value -> value * 30 / 100);
-        if (membershipDiscount.get() > 8000) {
-            membershipDiscount.updateAndGet(value -> 8000);
-        }
+        discountAmount.updateAndGet(value -> Math.min(value * 30 / 100, 8000));
+        return discountAmount.get();
+    }
 
-        List<PromotionResult> promotionResults = cart.cart().keySet().stream()
-                .filter(Product::isPromotionApplicable)
-                .map(product -> product.applyPromotion(cart.cart().get(product)))
-                .toList();
+    private static void purchaseProducts(Cart cart) {
+        cart.cart().forEach(Product::reduceStock);
+    }
 
-        Receipt receipt = Receipt.of(cart, promotionResults, membershipDiscount.get());
+    private void printReceipt(Cart cart, List<PromotionResult> promotionResults, int membershipDiscount) {
+        Receipt receipt = Receipt.of(cart, promotionResults, membershipDiscount);
         outputView.printReceipt(receipt);
+    }
 
-        cart.cart().forEach((product, quantity) -> inventoryService.reduceStock(product, quantity));
-
+    private void repurchaseIfWant() {
         outputView.printRepurchaseNotice();
-        boolean wantToRepurchase = inputHandler.getYesOrNo();
-        if (wantToRepurchase) {
+        if (inputHandler.isAffirmative()) {
             run();
         }
     }

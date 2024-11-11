@@ -81,7 +81,7 @@ public class InputHandler {
         });
     }
 
-    public boolean getYesOrNo() {
+    public boolean isAffirmative() {
         return validate(() -> {
             String yesOrNo = inputView.getYesOrNo().toUpperCase(Locale.ROOT);
             if (!yesOrNo.equals("Y") && !yesOrNo.equals("N")) {
@@ -119,7 +119,7 @@ public class InputHandler {
     }
 
     private void checkItemsStock(PurchaseRequest purchaseItems, ProductCatalog productCatalog) {
-        purchaseItems.cart().forEach((productName, quantity) -> {
+        purchaseItems.items().forEach((productName, quantity) -> {
             Products product = productCatalog.getProductByName(productName);
             int totalStock = product.products().stream().mapToInt(Product::stock).sum();
             boolean isOutOfStock = quantity > totalStock;

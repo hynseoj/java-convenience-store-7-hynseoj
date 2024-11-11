@@ -1,5 +1,6 @@
 package store.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Cart {
@@ -10,8 +11,8 @@ public class Cart {
         this.cart = cart;
     }
 
-    public static Cart from(Map<Product, Integer> cart) {
-        return new Cart(cart);
+    public static Cart empty() {
+        return new Cart(new HashMap<>());
     }
 
     public void addProduct(Product product, int quantity) {

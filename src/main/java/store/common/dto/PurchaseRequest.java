@@ -4,14 +4,14 @@ import java.util.Map;
 import java.util.Set;
 
 public record PurchaseRequest(
-        Map<String, Integer> cart
+        Map<String, Integer> items
 ) {
     public static PurchaseRequest from(Map<String, Integer> cart) {
         return new PurchaseRequest(cart);
     }
 
     public PurchaseProductNames getProductNames() {
-        return PurchaseProductNames.from(cart.keySet());
+        return PurchaseProductNames.from(items.keySet());
     }
 
     public record PurchaseProductNames(
