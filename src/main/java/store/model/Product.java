@@ -1,18 +1,20 @@
 package store.model;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import store.common.dto.PromotionResult;
 
 public class Product {
 
     private final String name;
     private final int price;
-    private final int stock;
+    private final AtomicInteger stock;
     private final Promotion promotion;
 
     private Product(String name, int price, int stock, Promotion promotion) {
         this.name = name;
         this.price = price;
-        this.stock = stock;
+        this.stock = new AtomicInteger(stock);
         this.promotion = promotion;
     }
 
@@ -27,6 +29,17 @@ public class Product {
         return promotion.isWithinPromotionPeriod();
     }
 
+    public boolean isInStock(int quantity) {
+        return stock.get() >= quantity;
+    }
+
+    public void reduceStock(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException();
+        }
+        stock.addAndGet(-quantity);
+    }
+
     public String name() {
         return name;
     }
@@ -36,7 +49,7 @@ public class Product {
     }
 
     public int stock() {
-        return stock;
+        return stock.get();
     }
 
     public Promotion promotion() {

@@ -29,5 +29,12 @@ public class StoreFacade {
         inventoryService.checkItemsStock(purchaseItems);
 
         Products promotionalProducts = promotionService.getPromotionalProducts(productNames);
+
+        promotionalProducts.products().forEach(product -> {
+            int purchaseQuantity = purchaseItems.cart().get(product.name());
+            if (product.isInStock(purchaseQuantity)) {
+                product.reduceStock(purchaseQuantity);
+            }
+        });
     }
 }
