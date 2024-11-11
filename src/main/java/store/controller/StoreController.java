@@ -4,10 +4,12 @@ import static store.common.constant.PromotionNotice.GET_FREE_M_NOTICE;
 import static store.common.constant.PromotionNotice.OUT_OF_STOCK_NOTICE;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import store.application.service.InventoryService;
 import store.application.service.PromotionService;
 import store.common.dto.PromotionConditionResult;
+import store.common.dto.PromotionResult;
 import store.common.dto.PurchaseRequest;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Cart;
@@ -15,6 +17,7 @@ import store.model.Product;
 import store.model.ProductCatalog;
 import store.model.Products;
 import store.model.PromotionCatalog;
+import store.model.Receipt;
 import store.view.OutputView;
 
 public class StoreController {
@@ -101,6 +104,14 @@ public class StoreController {
         if (membershipDiscount.get() > 8000) {
             membershipDiscount.updateAndGet(value -> 8000);
         }
+
+        List<PromotionResult> promotionResults = cart.cart().keySet().stream()
+                .filter(Product::isPromotionApplicable)
+                .map(product -> product.applyPromotion(cart.cart().get(product)))
+                .toList();
+
+        Receipt receipt = Receipt.of(cart, promotionResults, membershipDiscount.get());
+        outputView.printReceipt(receipt);
 
         cart.cart().forEach((product, quantity) -> inventoryService.reduceStock(product, quantity));
 

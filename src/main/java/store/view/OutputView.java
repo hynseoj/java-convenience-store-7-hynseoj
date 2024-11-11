@@ -1,9 +1,12 @@
 package store.view;
 
 import java.text.NumberFormat;
+import java.util.Map;
+import java.util.stream.Collectors;
 import store.model.Product;
 import store.model.ProductCatalog;
 import store.model.Promotion;
+import store.model.Receipt;
 
 public class OutputView {
 
@@ -26,6 +29,42 @@ public class OutputView {
 
     public void printMembershipNotice() {
         System.out.print("멤버십 할인을 받으시겠습니까?");
+    }
+
+    public void printReceipt(Receipt receipt) {
+        StringBuilder receiptBuilder = new StringBuilder();
+
+        receiptBuilder.append("================W 편의점================\n");
+        Map<String, Integer> groupedItems = receipt.cart().cart().entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().name(),
+                        Map.Entry::getValue,
+                        Integer::sum
+                ));
+        receiptBuilder.append(String.format("%-10s %5s %10s\n", "상품명", "수량", "금액"));
+        groupedItems.forEach((productName, quantity) -> {
+            int price = receipt.cart().cart().entrySet().stream()
+                    .filter(entry -> entry.getKey().name().equals(productName))
+                    .mapToInt(entry -> entry.getKey().price() * entry.getValue())
+                    .sum();
+            if (quantity > 0) {
+                receiptBuilder.append(String.format("%-10s %5d %,10d\n", productName, quantity, price));
+            }
+        });
+        receiptBuilder.append("===============증 정==================\n");
+        receipt.promotionResults().forEach(result -> {
+            if (result.freeQuantity() > 0) {
+                receiptBuilder.append(String.format("%-10s %5d\n", result.productName(), result.freeQuantity()));
+            }
+        });
+        receiptBuilder.append("=====================================\n");
+        receiptBuilder.append(String.format("%-10s %5d %,10d\n", "총구매액",
+                groupedItems.values().stream().mapToInt(Integer::intValue).sum(), receipt.totalPrice()));
+        receiptBuilder.append(String.format("%-10s %,15d\n", "행사할인", -receipt.promotionDiscount()));
+        receiptBuilder.append(String.format("%-10s %,15d\n", "멤버십할인", -receipt.membershipDiscount()));
+        receiptBuilder.append(String.format("%-10s %,15d\n", "내실돈", receipt.paymentPrice()));
+
+        System.out.println(receiptBuilder);
     }
 
     private void printProduct(Product product) {
