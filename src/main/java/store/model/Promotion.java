@@ -1,5 +1,6 @@
 package store.model;
 
+import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
 import java.util.Objects;
 import store.common.dto.PromotionConditionResult;
@@ -29,7 +30,7 @@ public class Promotion {
     }
 
     public boolean isWithinPromotionPeriod() {
-        LocalDate now = LocalDate.now();
+        LocalDate now = LocalDate.from(DateTimes.now());
         return (now.isEqual(startDate) || now.isAfter(startDate)) &&
                 (now.isEqual(endDate) || now.isBefore(endDate));
     }

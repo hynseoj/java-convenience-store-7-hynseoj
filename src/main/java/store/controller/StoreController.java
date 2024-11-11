@@ -24,33 +24,30 @@ public class StoreController {
 
     private final InputHandler inputHandler;
     private final OutputView outputView;
+
+    private final ProductCatalog productCatalog;
+    private final PromotionCatalog promotionCatalog;
+
     private InventoryService inventoryService;
     private PromotionService promotionService;
-    private ProductCatalog productCatalog;
-    private PromotionCatalog promotionCatalog;
 
     public StoreController(InputHandler inputHandler, OutputView outputView) {
         this.inputHandler = inputHandler;
         this.outputView = outputView;
+        promotionCatalog = inputHandler.getPromotions();
+        productCatalog = inputHandler.getProducts(promotionCatalog);
+        inventoryService = new InventoryService(productCatalog);
+        promotionService = new PromotionService(productCatalog);
     }
 
     public void run() {
-        if (promotionCatalog == null || productCatalog == null) {
-            promotionCatalog = inputHandler.getPromotions();
-            productCatalog = inputHandler.getProducts(promotionCatalog);
-            inventoryService = new InventoryService(productCatalog);
-            promotionService = new PromotionService(productCatalog);
-        }
         outputView.printStoreInventory(productCatalog);
 
         inventoryService = new InventoryService(productCatalog);
         promotionService = new PromotionService(productCatalog);
 
-        PurchaseRequest purchaseItems = inputHandler.getPurchaseItems();
+        PurchaseRequest purchaseItems = inputHandler.getPurchaseItems(productCatalog);
         PurchaseProductNames productNames = purchaseItems.getProductNames();
-
-        inventoryService.validateItemsExist(productNames);
-        inventoryService.checkItemsStock(purchaseItems);
 
         Products promotionalProducts = promotionService.getPromotionalProducts(productNames);
 
