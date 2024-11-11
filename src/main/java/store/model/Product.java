@@ -38,10 +38,6 @@ public class Product {
         return promotion.checkCondition(this, quantity);
     }
 
-    public boolean isInStock(int quantity) {
-        return stock.get() >= quantity;
-    }
-
     public void reduceStock(int quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException();

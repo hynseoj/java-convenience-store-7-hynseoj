@@ -64,21 +64,24 @@ public class InputHandler {
     public PurchaseRequest getPurchaseItems(ProductCatalog productCatalog) {
         return validate(() -> {
             List<String> purchaseItems = StringUtils.splitWithDelimiter(inputView.getPurchaseItems(), ",");
-            try {
-                PurchaseRequest request = PurchaseRequest.from(
-                        purchaseItems.stream()
-                                .map(purchaseItem -> StringUtils.extractFromRegex(purchaseItem, PURCHASE_ITEM_REGEX))
-                                .collect(Collectors.toMap(item -> item.get(0).strip(),
-                                        item -> StringUtils.parseInt(item.get(1))))
-                );
-
-                validateItemsExist(request.getProductNames(), productCatalog);
-                checkItemsStock(request, productCatalog);
-                return request;
-            } catch (IllegalStateException e) {
-                throw new IllegalArgumentException(INPUT_INVALID_FORMAT.message());
-            }
+            PurchaseRequest request = getPurchaseRequest(purchaseItems);
+            validateItemsExist(request.getProductNames(), productCatalog);
+            checkItemsStock(request, productCatalog);
+            return request;
         });
+    }
+
+    private PurchaseRequest getPurchaseRequest(List<String> purchaseItems) {
+        try {
+            return PurchaseRequest.from(
+                    purchaseItems.stream()
+                            .map(purchaseItem -> StringUtils.extractFromRegex(purchaseItem, PURCHASE_ITEM_REGEX))
+                            .collect(Collectors.toMap(item -> item.get(0).strip(),
+                                    item -> StringUtils.parseInt(item.get(1))))
+            );
+        } catch (IllegalStateException e) {
+            throw new IllegalArgumentException(INPUT_INVALID_FORMAT.message());
+        }
     }
 
     public boolean isAffirmative() {
