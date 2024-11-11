@@ -34,4 +34,8 @@ public class InventoryService {
             }
         });
     }
+
+    public void reduceStock(Product product, int quantity) {
+        product.reduceStock(quantity);
+    }
 }

@@ -10,6 +10,7 @@ import store.common.dto.PromotionConditionResult;
 import store.common.dto.PurchaseRequest;
 import store.common.dto.PurchaseRequest.PurchaseProductNames;
 import store.model.Cart;
+import store.model.Product;
 import store.model.ProductCatalog;
 import store.model.Products;
 import store.model.PromotionCatalog;
@@ -50,7 +51,9 @@ public class StoreController {
                     product, purchaseQuantity
             );
 
-            if (conditionResult.message().equals(GET_FREE_M_NOTICE.message())) {
+            System.out.println(conditionResult);
+
+            if (GET_FREE_M_NOTICE.matches(conditionResult.message())) {
                 outputView.printGetFreeNotice(conditionResult.message());
                 boolean wantToAdd = inputHandler.getYesOrNo();
                 if (wantToAdd) {
@@ -59,8 +62,7 @@ public class StoreController {
                     cart.addProduct(product, purchaseQuantity);
                 }
                 purchaseItems.cart().remove(product.name());
-            }
-            if (conditionResult.message().equals(OUT_OF_STOCK_NOTICE.message())) {
+            } else if (OUT_OF_STOCK_NOTICE.matches(conditionResult.message())) {
                 outputView.printPromotionOutOfStockNotice(conditionResult.message());
                 boolean wantToBuy = inputHandler.getYesOrNo();
                 cart.addProduct(product, conditionResult.stockUsed());
@@ -69,7 +71,24 @@ public class StoreController {
                 } else {
                     purchaseItems.cart().remove(product.name());
                 }
+            } else {
+                cart.addProduct(product, conditionResult.stockUsed());
+                purchaseItems.cart().replace(product.name(), purchaseQuantity - conditionResult.stockUsed());
             }
         });
+
+        purchaseItems.cart().keySet().forEach(productName -> {
+            Product product = productCatalog.getProductByName(productName).products().stream()
+                    .findFirst()
+                    .orElseThrow();
+            if (product.promotion() != null) {
+                System.out.println("이상함");
+            }
+            cart.addProduct(product, purchaseItems.cart().get(productName));
+        });
+
+        cart.cart().forEach((product, quantity) -> inventoryService.reduceStock(product, quantity));
+
+        outputView.printStoreInventory(productCatalog);
     }
 }

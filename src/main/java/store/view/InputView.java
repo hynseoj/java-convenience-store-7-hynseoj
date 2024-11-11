@@ -14,7 +14,7 @@ public class InputView {
     }
 
     public String getYesOrNo() {
-        System.out.println("(Y/N)");
+        System.out.println(" (Y/N)");
         String message = Console.readLine().strip();
         validateNotEmpty(message);
         return message;
