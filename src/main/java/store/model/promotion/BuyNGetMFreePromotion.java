@@ -21,7 +21,7 @@ public class BuyNGetMFreePromotion implements PromotionStrategy {
     @Override
     public PromotionResult applyPromotion(Product product, int quantity) {
         int totalFreeQuantity = getApplicableSetCount(quantity) * freeQuantity;
-        return PromotionResult.of(product.price() * totalFreeQuantity, totalFreeQuantity);
+        return PromotionResult.of(product.name(), product.price() * totalFreeQuantity, totalFreeQuantity);
     }
 
     @Override

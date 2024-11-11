@@ -86,10 +86,6 @@ public class StoreController {
             cart.addProduct(product, purchaseItems.cart().get(productName));
         });
 
-        cart.cart().forEach((product, quantity) -> inventoryService.reduceStock(product, quantity));
-
-        outputView.printStoreInventory(productCatalog);
-
         outputView.printMembershipNotice();
         boolean hasMembership = inputHandler.getYesOrNo();
         AtomicInteger membershipDiscount = new AtomicInteger();
@@ -105,6 +101,9 @@ public class StoreController {
         if (membershipDiscount.get() > 8000) {
             membershipDiscount.updateAndGet(value -> 8000);
         }
-        System.out.println(membershipDiscount.get());
+
+        cart.cart().forEach((product, quantity) -> inventoryService.reduceStock(product, quantity));
+
+        outputView.printStoreInventory(productCatalog);
     }
 }
