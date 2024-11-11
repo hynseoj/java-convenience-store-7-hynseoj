@@ -16,8 +16,12 @@ public class OutputView {
         productCatalog.products().forEach(this::printProduct);
     }
 
-    public void printPromotionNotice(String message) {
-        System.out.println(message);
+    public void printGetFreeNotice(String message) {
+        System.out.print(message + "추가하시겠습니까?");
+    }
+
+    public void printPromotionOutOfStockNotice(String message) {
+        System.out.print(message + "그래도 구매하시겠습니까?");
     }
 
     private void printProduct(Product product) {

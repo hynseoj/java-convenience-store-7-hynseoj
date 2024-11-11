@@ -13,6 +13,13 @@ public class InputView {
         return message;
     }
 
+    public String getYesOrNo() {
+        System.out.println("(Y/N)");
+        String message = Console.readLine().strip();
+        validateNotEmpty(message);
+        return message;
+    }
+
     private void validateNotEmpty(String message) {
         if (message == null || message.isEmpty()) {
             throw new IllegalArgumentException(INPUT_EMPTY_ERROR.message());

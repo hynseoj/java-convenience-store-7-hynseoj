@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import store.common.dto.PurchaseRequest;
@@ -67,6 +68,14 @@ public class InputHandler {
         } catch (IllegalStateException e) {
             throw new IllegalArgumentException(INPUT_INVALID_FORMAT.message());
         }
+    }
+
+    public boolean getYesOrNo() {
+        String yesOrNo = inputView.getYesOrNo().toUpperCase(Locale.ROOT);
+        if (!yesOrNo.equals("Y") && !yesOrNo.equals("N")) {
+            throw new IllegalArgumentException(INPUT_INVALID_FORMAT.message());
+        }
+        return yesOrNo.equals("Y");
     }
 
     private Promotion makePromotion(List<String> promotionValues) {
