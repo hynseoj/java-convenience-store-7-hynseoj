@@ -88,7 +88,7 @@ public class OutputView {
         if (stock == 0) {
             return OUT_OF_STOCK_MESSAGE;
         }
-        return String.valueOf(stock);
+        return String.valueOf(stock) + "개";
     }
 
     private String getPromotionNameValue(Promotion promotion) {
