@@ -4,6 +4,7 @@ import static store.common.constant.PromotionNotice.GET_FREE_M_NOTICE;
 import static store.common.constant.PromotionNotice.OUT_OF_STOCK_NOTICE;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import store.application.service.InventoryService;
 import store.application.service.PromotionService;
 import store.common.dto.PromotionConditionResult;
@@ -51,8 +52,6 @@ public class StoreController {
                     product, purchaseQuantity
             );
 
-            System.out.println(conditionResult);
-
             if (GET_FREE_M_NOTICE.matches(conditionResult.message())) {
                 outputView.printGetFreeNotice(conditionResult.message());
                 boolean wantToAdd = inputHandler.getYesOrNo();
@@ -93,5 +92,16 @@ public class StoreController {
 
         outputView.printMembershipNotice();
         boolean hasMembership = inputHandler.getYesOrNo();
+        AtomicInteger membershipDiscount = new AtomicInteger();
+        if (hasMembership) {
+            cart.cart().forEach((product, quantity) -> {
+                if (promotionalProducts.products().contains(product)) {
+                    return;
+                }
+                membershipDiscount.addAndGet(product.price() * quantity);
+            });
+        }
+        membershipDiscount.updateAndGet(value -> value * 30 / 100);
+        System.out.println(membershipDiscount.get());
     }
 }
